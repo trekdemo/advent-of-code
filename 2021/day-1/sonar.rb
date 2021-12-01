@@ -2,25 +2,34 @@
 
 # Sonar - Advanced Submarine Sonar instrument
 class Sonar
-  def increase_count(measurements)
+  attr_reader :measurements
+
+  def initialize(measurements)
+    @measurements = measurements
+  end
+
+  def increase_count
+    _increase_count(measurements)
+  end
+
+  def three_increase_count
+    noise_reduced_measurements = measurements.each_cons(3).map(&:sum)
+    _increase_count(noise_reduced_measurements)
+  end
+
+  private
+
+  def _increase_count(measurements)
     measurements
       .each_cons(2)
       .select { |(a, b)| b > a }
       .count
   end
-
-  def three_increase_count(measurements)
-    increase_count(
-      measurements
-        .each_cons(3)
-        .map(&:sum)
-    )
-  end
 end
 
 if __FILE__ == $PROGRAM_NAME
-  sonar = Sonar.new
   measurements = File.read(ARGV[0]).split("\n").map(&:to_i)
-  puts format('Simple increase: %s', sonar.increase_count(measurements))
-  puts format('3 Sliding increase: %s', sonar.three_increase_count(measurements))
+  sonar = Sonar.new(measurements)
+  puts format('Simple increase: %s', sonar.increase_count)
+  puts format('3 Sliding increase: %s', sonar.three_increase_count)
 end
