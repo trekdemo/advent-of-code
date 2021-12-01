@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Sonar - Advanced Submarine Sonar instrument
 class Sonar
   def increase_count(measurements)
     measurements
@@ -8,13 +9,18 @@ class Sonar
       .count
   end
 
-  def increase_count_from_file(file_path)
-    increase_count(File.read(file_path).split("\n").map(&:to_i))
+  def three_increase_count(measurements)
+    increase_count(
+      measurements
+        .each_cons(3)
+        .map(&:sum)
+    )
   end
 end
 
-if __FILE__ == $0
+if __FILE__ == $PROGRAM_NAME
   sonar = Sonar.new
-  puts sonar.increase_count_from_file('./input-small.csv')
-  puts sonar.increase_count_from_file('./input-aoc.csv')
+  measurements = File.read(ARGV[0]).split("\n").map(&:to_i)
+  puts format('Simple increase: %s', sonar.increase_count(measurements))
+  puts format('3 Sliding increase: %s', sonar.three_increase_count(measurements))
 end
