@@ -1,15 +1,9 @@
 {
-  "jest": {
-    "transform": {
-      "^.+\\.jsx?$": "./babel-jest.js"
-    }
-  },
+  "type": "module",
   "scripts": {
-    "test": "jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.0",
-    "@babel/plugin-transform-modules-commonjs": "^7.16.0",
     "babel-jest": "^27.4.2",
     "jest": "^27.4.3"
   }
