@@ -17,6 +17,6 @@ class TestControl < Minitest::Test
   end
 
   def test_execute_and_report
-    assert_equal 150, @control.execute_and_report
+    assert_equal 900, @control.execute_and_report
   end
 end

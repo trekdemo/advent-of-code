@@ -1,5 +1,6 @@
 class Control
   def initialize(commands)
+    @aim = 0
     @x = 0
     @z = 0
     @commands = commands.split("\n")
@@ -25,10 +26,11 @@ class Control
     case direction
     when 'forward'
       @x += distance
+      @z += @aim * distance
     when 'down'
-      @z += distance
+      @aim += distance
     when 'up'
-      @z -= distance
+      @aim -= distance
     end
   end
 end
