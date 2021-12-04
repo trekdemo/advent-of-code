@@ -24,4 +24,11 @@ class TestBingo < Minitest::Test
       @bingo.simulate_first_win
     )
   end
+
+  def test_simulate_last_win
+    assert_equal(
+      { board: 2, lucky_number: 13, score: 148, total_score: 1924 },
+      @bingo.simulate_last_win
+    )
+  end
 end

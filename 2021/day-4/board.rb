@@ -9,12 +9,13 @@ require 'set'
 #    6 10  3 18  5
 #    1 12 20 15 19
 class Board
-  attr_reader :board, :found
+  attr_reader :board, :found, :index
 
   # @param [String] board is a space separated matrix of numbers
-  def initialize(board)
+  def initialize(board, index = 1)
     @board = board.split(/\s+/).map(&:to_i)
     @found = []
+    @index = index
   end
 
   def won?
