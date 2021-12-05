@@ -10,6 +10,6 @@ class TestOverlaps < Minitest::Test
   end
 
   def test_overlaps
-    assert_equal 5, @overlaps.overlaps
+    assert_equal 12, @overlaps.overlaps
   end
 end

@@ -11,7 +11,6 @@ class Overlaps
     @input
       .split("\n") # Split up into strings of line segments
       .map { |l| LineSegment.new(*l.match(LINE_FORMAT).captures.map(&:to_i)) }
-      .reject(&:diagonal?)
       .map(&:covered_points)
       .flatten(1)
       .tally
@@ -36,9 +35,38 @@ class LineSegment
   def covered_points
     if y1 == y2 # horizontal
       Range.new(*[x1, x2].sort).to_a.map { |x| [x, y1] }
-    else # vertical
+    elsif x1 == x2 # vertical
       Range.new(*[y1, y2].sort).to_a.map { |y| [x1, y] }
+    else # diagonal
+      []
     end
+  end
+
+  def covered_points
+    res = []
+    if x1 == x2
+      res = Range.new(*[y1, y2].sort).map { |y| [x1, y] }
+    elsif y1 == y2
+      res = Range.new(*[x1, x2].sort).map { |x| [x, y1] }
+    else
+      # https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+      dx = x2 - x1
+      dy = y2 - y1
+      d = 2 * dy - dx
+      y = y1
+      dir = x1 > x2 ? :downto : :upto
+      x1.send(dir, x2) do |x|
+        res << [x, y]
+        if d > 0
+          y += 1
+          d -= 2 * dx
+        end
+        d += 2 * dy
+      end
+    end
+
+    puts "#{inspect}: #{res}"
+    res
   end
 
   def inspect
