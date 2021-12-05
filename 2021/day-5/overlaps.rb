@@ -32,41 +32,40 @@ class LineSegment
     x1 != x2 && y1 != y2
   end
 
-  def covered_points
-    if y1 == y2 # horizontal
-      Range.new(*[x1, x2].sort).to_a.map { |x| [x, y1] }
-    elsif x1 == x2 # vertical
-      Range.new(*[y1, y2].sort).to_a.map { |y| [x1, y] }
-    else # diagonal
-      []
-    end
-  end
+  # def covered_points
+  #   if y1 == y2 # horizontal
+  #     Range.new(*[x1, x2].sort).to_a.map { |x| [x, y1] }
+  #   elsif x1 == x2 # vertical
+  #     Range.new(*[y1, y2].sort).to_a.map { |y| [x1, y] }
+  #   else # diagonal
+  #     []
+  #   end
+  # end
 
   def covered_points
+    # https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
     res = []
-    if x1 == x2
-      res = Range.new(*[y1, y2].sort).map { |y| [x1, y] }
-    elsif y1 == y2
-      res = Range.new(*[x1, x2].sort).map { |x| [x, y1] }
-    else
-      # https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-      dx = x2 - x1
-      dy = y2 - y1
-      d = 2 * dy - dx
-      y = y1
-      dir = x1 > x2 ? :downto : :upto
-      x1.send(dir, x2) do |x|
-        res << [x, y]
-        if d > 0
-          y += 1
-          d -= 2 * dx
-        end
-        d += 2 * dy
+    x1 = @x1
+    y1 = @y1
+    dx = (x2 - x1).abs
+    sx = x1 < x2 ? 1 : -1
+    dy = -(y2 - y1).abs
+    sy = y1 < y2 ? 1 : -1
+    err = dx + dy; # error value e_xy
+    loop do
+      res << [x1, y1]
+      return res if x1 == x2 && y1 == y2
+
+      e2 = 2 * err
+      if e2 >= dy # e_xy+e_x > 0
+        err += dy
+        x1 += sx
+      end
+      if e2 <= dx # e_xy+e_y < 0
+        err += dx
+        y1 += sy
       end
     end
-
-    puts "#{inspect}: #{res}"
-    res
   end
 
   def inspect
