@@ -15,4 +15,8 @@ class GameOfFishTest < Minitest::Test
   def test_iteration_after_80_days
     assert_equal 5934, fish_population(@input, 80)
   end
+
+  # def test_iteration_after_256_days
+  #   assert_equal 26_984_457_539, fish_population(@input, 256)
+  # end
 end

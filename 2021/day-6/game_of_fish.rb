@@ -13,7 +13,7 @@ def fish_population(initial_state, iterations)
         6
       end
     end
-    state.push(*new_additions)
+    state.concat(new_additions)
 
     # puts "After #{i + 1} days: #{state}"
   end.size
