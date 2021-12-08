@@ -42,19 +42,27 @@ class Decoder
     @output_signals.flatten.select { |s| selected_signal_count.include?(s.length) }.length
   end
 
-  def deduce_mapping(_map_base)
-    {
-      'cagedb'.sort => 0,
-      'ab'.sort => 1,
-      'gcdfa'.sort => 2,
-      'fbcad'.sort => 3,
-      'eafb'.sort => 4,
-      'cdfbe'.sort => 5,
-      'cdfgeb'.sort => 6,
-      'dab'.sort => 7,
-      'acedgfb'.sort => 8,
-      'cefabd'.sort => 9
-    }
+  def find_by_length(arr, length)
+    arr.find { |s| s.length == length }
+  end
+
+  def deduce_mapping(map_base)
+    result = {}
+
+    # Find uniq digits
+    result[find_by_length(map_base, SIGNAL_COUNT[1]).sort] = 1
+    result[find_by_length(map_base, SIGNAL_COUNT[4]).sort] = 4
+    result[find_by_length(map_base, SIGNAL_COUNT[7]).sort] = 7
+    result[find_by_length(map_base, SIGNAL_COUNT[8]).sort] = 8
+
+    result.merge({
+                   'cagedb'.sort => 0,
+                   'gcdfa'.sort => 2,
+                   'fbcad'.sort => 3,
+                   'cdfbe'.sort => 5,
+                   'cdfgeb'.sort => 6,
+                   'cefabd'.sort => 9
+                 })
   end
 
   def sum_output_signals
