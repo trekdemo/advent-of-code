@@ -23,4 +23,9 @@ class DecoderTest < Minitest::Test
   def test_uniq_digit_count
     assert_equal 26, @decoder.count(1, 4, 7, 8)
   end
+
+  def test_sum_of_output_signal_values
+    decoder = Decoder.new('acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf')
+    assert_equal 5353, decoder.sum_output_signals
+  end
 end
