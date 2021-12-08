@@ -4,6 +4,10 @@ class String
   def sort
     chars.sort(&:casecmp).join
   end
+
+  def |(other)
+    (chars | other.chars).sort.join
+  end
 end
 
 class Decoder
@@ -19,14 +23,6 @@ class Decoder
     8 => 7,
     9 => 6
   }.freeze
-  SIGNAL_COUNT_GROUP = {
-    2 => [1],
-    3 => [7],
-    4 => [4],
-    5 => [2, 3, 5],
-    6 => [0, 6, 9],
-    7 => [8]
-  }
 
   def initialize(input)
     @input = input.split("\n").map do |line|
@@ -42,8 +38,8 @@ class Decoder
     @output_signals.flatten.select { |s| selected_signal_count.include?(s.length) }.length
   end
 
-  def find_by_length(arr, length)
-    arr.find { |s| s.length == length }
+  def sel_length(arr, length)
+    arr.select { |s| s.length == length }
   end
 
   #    aaaa    0 abcefg
@@ -65,28 +61,43 @@ class Decoder
   # acedgfb => 8
   # cdfbe   => ? -> b == cf,  d == a
   #
-  def deduce_mapping(map_base)
-    result = {}
+  def deduce_mapping(uniq_signals)
+    result = Array.new(10, nil)
 
     # Find uniq digits
-    result[find_by_length(map_base, SIGNAL_COUNT[1]).sort] = 1
-    result[find_by_length(map_base, SIGNAL_COUNT[4]).sort] = 4
-    result[find_by_length(map_base, SIGNAL_COUNT[7]).sort] = 7
-    result[find_by_length(map_base, SIGNAL_COUNT[8]).sort] = 8
+    result[1] = sel_length(uniq_signals, 2)[0].sort
+    result[4] = sel_length(uniq_signals, 4)[0].sort
+    result[7] = sel_length(uniq_signals, 3)[0].sort
+    result[8] = sel_length(uniq_signals, 7)[0].sort
 
-    result.merge({
-                   'cagedb'.sort => 0,
-                   'gcdfa'.sort => 2,
-                   'fbcad'.sort => 3,
-                   'cdfbe'.sort => 5,
-                   'cdfgeb'.sort => 6,
-                   'cefabd'.sort => 9
-                 })
+    # Find 6 long signals based on masik with known signals
+    sel_length(uniq_signals, 6).each do |signal|
+      if signal | result[4] != result[8]
+        result[9] = signal.sort
+      elsif signal | result[1] == result[8]
+        result[6] = signal.sort
+      else
+        result[0] = signal.sort
+      end
+    end
+
+    # Find 5 long signals based on masik with known signals
+    sel_length(uniq_signals, 5).each do |signal|
+      if signal | result[4] == result[8]
+        result[2] = signal.sort
+      elsif signal | result[6] == result[8]
+        result[3] = signal.sort
+      else
+        result[5] = signal.sort
+      end
+    end
+
+    Hash[result.each_with_index.map { |e, i| [e, i] }]
   end
 
   def sum_output_signals
-    numbers = @input.map do |(map_base, signals)|
-      mapping = deduce_mapping(map_base)
+    numbers = @input.map do |(uniq_signals, signals)|
+      mapping = deduce_mapping(uniq_signals)
       signals.map do |signal|
         mapping[signal.sort]
       end.join.to_i
