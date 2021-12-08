@@ -46,6 +46,25 @@ class Decoder
     arr.find { |s| s.length == length }
   end
 
+  #    aaaa    0 abcefg
+  #   b    c  *1 cf
+  #   b    c   2 acdeg
+  #    dddd    3 acdfg
+  #   e    f  *4 bcdf
+  #   e    f   5 abdfg
+  #    gggg    6 abdefg
+  #           *7 acf
+  #           *8 abcdefg
+  #            9 abcdfg
+
+  # cdfbe gcdfa fbcad cefabd cdfgeb cagedb
+  #
+  # ab      => 1
+  # dab     => 7 -> d == a,   ab == cf
+  # eafb    => 4 -> ab == cf, ea == bd
+  # acedgfb => 8
+  # cdfbe   => ? -> b == cf,  d == a
+  #
   def deduce_mapping(map_base)
     result = {}
 
