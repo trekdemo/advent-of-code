@@ -24,4 +24,8 @@ class SmokeSimulatorTest < Minitest::Test
   def test_sum_risk_level
     assert_equal 15, @sim.sum_risk_level
   end
+
+  def test_basin_product
+    assert_equal 1134, @sim.basin_product
+  end
 end

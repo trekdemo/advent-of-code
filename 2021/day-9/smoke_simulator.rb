@@ -3,6 +3,8 @@
 class Grid
   def initialize(input)
     @grid = input
+    @height = input.length
+    @width = input[0].length
   end
 
   def each_with_index
@@ -17,8 +19,9 @@ class Grid
 
   def get(x, y)
     return nil if x < 0 || y < 0
+    return nil if x >= @width || y >= @height
 
-    @grid[y] && @grid[y][x]
+    [@grid[y][x], [x, y]]
   end
 
   # x1x
@@ -43,12 +46,36 @@ class SmokeSimulator
     @low_points ||= @hmap.each_with_index.select do |e, (x, y)|
       adjacents = @hmap.adjacents(x, y)
       # puts format('(%d, %d): %d -> %s', x, y, e, adjacents)
-      adjacents.all? { |a| a > e }
+      adjacents.all? { |a| a.first > e }
     end
+  end
+
+  def basins
+    low_points.map do |p|
+      extend_neighbors_until(p)
+    end
+  end
+
+  def extend_neighbors_until(point, max_height = 9)
+    res = [point]
+    to_check = @hmap.adjacents(*point.last).select { |p| p.first < max_height }
+    while (c = to_check.pop)
+      next if c.first >= max_height
+
+      res << c
+      to_check.concat(
+        @hmap.adjacents(*c.last).select { |p| p.first < max_height } - res - to_check
+      )
+    end
+    res
   end
 
   def sum_risk_level
     low_points.map(&:first).sum { |i| i + 1 }
+  end
+
+  def basin_product(take = 3)
+    basins.sort_by(&:length).last(take).reduce(1) { |a, e| a * e.length }
   end
 end
 
@@ -59,7 +86,7 @@ if __FILE__ == $PROGRAM_NAME
 
     puts "Risk level: #{sim.sum_risk_level}"
     puts "Low points #{sim.low_points.length}"
-    puts sim.low_points.map(&:first).inspect
+    puts "Basin product: #{sim.basin_product}"
     puts
   end
 end
