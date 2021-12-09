@@ -15,7 +15,10 @@ class SmokeSimulatorTest < Minitest::Test
   end
 
   def test_low_points
-    assert_equal [1, 0, 5, 5], @sim.low_points
+    assert_equal(
+      [[1, [1, 0]], [0, [9, 0]], [5, [2, 2]], [5, [6, 4]]],
+      @sim.low_points
+    )
   end
 
   def test_sum_risk_level
