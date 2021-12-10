@@ -27,4 +27,8 @@ class SyntaxCheckerTest < Minitest::Test
     # syntax error score for this file is 6+57+1197+25137 = 26397 points!
     assert_equal ((2 * 3) + 57 + 1197 + 25_137), @checker.unexpected_score
   end
+
+  def test_completion_score
+    assert_equal 288_957, @checker.completion_score
+  end
 end
