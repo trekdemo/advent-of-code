@@ -19,7 +19,7 @@ class PathFinder
 
   def paths
     all_paths = []
-    visited = []
+    visited = Hash.new(0)
     current_path = [start]
 
     paths_between(start, stop, visited, current_path, all_paths)
@@ -27,23 +27,31 @@ class PathFinder
     all_paths
   end
 
-  # @param [Array] visited
+  # @param [Hash<String,Numeric>] visited
   # @param [Array<String>] local_path
   # @param [Array<Array>] all_paths
   def paths_between(start, dest, visited, local_path, all_paths)
+    # p(local_path)
     if start == dest
       all_paths.push(local_path.join(','))
       return
     end
 
-    visited.push(start) unless start == start.upcase
+    visited[start] += 1
+
     graph[start].sort.each do |node|
-      next if visited.include?(node)
+      if [@start, @stop].include?(node)
+        next if visited[node].positive?
+      elsif node == node.upcase
+        # NOOP, we can visit a big cave any time
+      elsif node == node.downcase
+        next if visited[node].positive? && visited.any? { |(k, v)| k == k.downcase && v > 1 }
+      end
 
       paths_between(node, dest, visited, local_path.dup.push(node), all_paths)
     end
 
-    visited.delete(start)
+    visited[start] -= 1
   end
 end
 
