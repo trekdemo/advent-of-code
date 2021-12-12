@@ -18,17 +18,32 @@ class PathFinder
   end
 
   def paths
-    paths = []
+    all_paths = []
+    visited = []
     current_path = [start]
 
-    while (node = current_path.pop)
-      if node == stop
-        paths << current_path
-        current_path = [start]
-      end
+    paths_between(start, stop, visited, current_path, all_paths)
+
+    all_paths
+  end
+
+  # @param [Array] visited
+  # @param [Array<String>] local_path
+  # @param [Array<Array>] all_paths
+  def paths_between(start, dest, visited, local_path, all_paths)
+    if start == dest
+      all_paths.push(local_path.join(','))
+      return
     end
 
-    paths.map { |p| p.join(',') }
+    visited.push(start) unless start == start.upcase
+    graph[start].sort.each do |node|
+      next if visited.include?(node)
+
+      paths_between(node, dest, visited, local_path.dup.push(node), all_paths)
+    end
+
+    visited.delete(start)
   end
 end
 

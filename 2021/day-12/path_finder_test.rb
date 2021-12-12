@@ -4,6 +4,11 @@ require 'minitest/autorun'
 require_relative './path_finder'
 
 class PathFinderTest < Minitest::Test
+  def assert_matched_arrays(expected, actual)
+    assert_empty expected - actual
+    assert_equal expected.to_ary.sort, actual.to_ary.sort
+  end
+
   def test_paths_n1
     path_finder = PathFinder.new(<<~SEGMENTS)
       start-A
@@ -14,7 +19,7 @@ class PathFinderTest < Minitest::Test
       A-end
       b-end
     SEGMENTS
-    assert_equal [
+    assert_matched_arrays [
       'start,A,b,A,c,A,end',
       'start,A,b,A,end',
       'start,A,b,end',
@@ -41,7 +46,7 @@ class PathFinderTest < Minitest::Test
       kj-HN
       kj-dc
     SEGMENTS
-    assert_equal [
+    assert_matched_arrays [
       'start,HN,dc,HN,end',
       'start,HN,dc,HN,kj,HN,end',
       'start,HN,dc,end',
