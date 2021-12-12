@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'minitest/autorun'
-require_relative './dombo_octopus'
+require_relative './dumbo_octopus'
 
 Minitest::Assertions.diff = nil
 
@@ -53,6 +53,51 @@ class DumboOctopusBiggerTest < Minitest::Test
       0000007456
       9000000876
       8700006848
+    EXP
+  end
+
+  def test_sim_n3
+    assert_equal grid(<<~EXP), dumbo.simulate(3)
+      0050900866
+      8500800575
+      9900000039
+      9700000041
+      9935080063
+      7712300000
+      7911250009
+      2211130000
+      0421125000
+      0021119000
+    EXP
+  end
+
+  def test_sim_n80
+    assert_equal grid(<<~EXP), dumbo.simulate(80)
+      1755555697
+      5965555609
+      4486555680
+      4458655580
+      4570865570
+      5700086566
+      7000008666
+      0000000990
+      0000000800
+      0000000000
+    EXP
+  end
+
+  def test_sim_n100
+    assert_equal grid(<<~EXP), dumbo.simulate(100)
+      0397666866
+      0749766918
+      0053976933
+      0004297822
+      0004229892
+      0053222877
+      0532222966
+      9322228966
+      7922286866
+      6789998766
     EXP
   end
 

@@ -142,8 +142,14 @@ class DumboOctopus
     grid
   end
 
-  def first_sync
+  def first_sync(print = false)
     simulate(999) do |grid, i|
+      if print
+        puts "\e[2J"
+        puts i + 1
+        puts grid.to_s
+        sleep 0.1
+      end
       return i + 1 if grid.grid.flatten.all?(&:zero?)
     end
   end
@@ -153,5 +159,5 @@ if __FILE__ == $PROGRAM_NAME
   input = File.read(File.expand_path('./input.txt', __dir__))
   subject = DumboOctopus.new(input)
   puts "Sum of flashes: #{subject.sum_flashes(100)}"
-  puts "First sync: #{subject.first_sync}"
+  puts "First sync: #{subject.first_sync(:print)}"
 end
