@@ -11,23 +11,27 @@ class Polimerization
   end
 
   def iterate(iterations)
-    poly = template
+    pair_counts = Hash.new(0)
+    element_counts = Hash.new(0)
 
-    iterations.times do |i|
-      puts  i if i > 10 # This is acceptable until 20
-      pairs = poly.each_cons(2).map(&:join)
-      # Does not work after iterations > 15
-      # rules.values_at(*pairs)
-      inserts = pairs.reduce([]) { |a, e| a.push(rules[e]) }
+    template.each_cons(2) { |c| pair_counts[c] += 1 }
+    template.each { |e| element_counts[e] += 1 }
 
-      poly = poly.zip(inserts).flatten.compact
+    iterations.times do
+      pair_counts.dup.each do |pair, count|
+        left, right = *pair
+        pair_counts[pair] -= count
+        pair_counts[[left, rules[pair.join]]] += count
+        pair_counts[[rules[pair.join], right]] += count
+        element_counts[rules[pair.join]] += count
+      end
     end
 
-    poly.join
+    element_counts
   end
 
   def diff_most_least_common_element(iterations)
-    tally = iterate(iterations).chars.tally
+    tally = iterate(iterations)
     min, max = *tally.values.minmax
     max - min
   end
